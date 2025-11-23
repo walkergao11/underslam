@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2"> <!-- 确保 format="2"（ROS Kinetic及更新版本） -->
+  <name>pcc_project</name>
+  <version>0.1.0</version>
+  <description>My ROS package</description>
+  <maintainer email="you@example.com">Your Name</maintainer>
+  <license>BSD</license>
+
+  <!-- 声明 catkin 为构建工具 -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- 其他依赖（根据实际需求添加） -->
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_msgs</depend>
+
+  <!-- 测试代码 -->
+  <!-- 构建时依赖：用于生成消息代码 -->
+  <build_depend>message_generation</build_depend>
+  
+  <!-- 运行时依赖：用于链接和使用消息 -->
+  <exec_depend>message_runtime</exec_depend>
+  <depend>pcl_ros</depend>
+  <!-- - -->
+</package>

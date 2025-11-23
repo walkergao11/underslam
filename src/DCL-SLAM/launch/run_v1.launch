@@ -1,0 +1,77 @@
+<launch>
+	<arg name="set_lio_type" default="1"/> <!-- 1 for LIO-SAM
+												2 for FAST-LIO2 -->
+	<param name="/number_of_robots" value="3"/>
+	<arg name="set_respawn_value" default="false"/>  <!-- boolean: true, false -->
+
+	<!--- rviz -->
+	<node pkg="rviz" type="rviz" name="dcl_rviz" args="-d $(find dcl_slam)/config/dcl_rviz.rviz" />
+	<node pkg="dcl_slam" type="dcl_slam_loopVisualizationNode" name="dcl_slam_loopVisualizationNode" output="screen" />
+
+	<!-- 启动每个机器人的 DCL-SLAM 节点 -->
+  	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="a"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="b"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="c"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+	
+	<!-- 机器人 a 的 pcc_compressor_node 配置（适配实际话题名） -->
+  <node pkg="pcc_project" type="pcc_compressor_node" name="pcc_compressor_a" output="screen" respawn="$(arg set_respawn_value)">
+    <param name="robot_prefix" value="a" />          <!-- 机器人ID，用于 sender_id 字段 -->
+    <param name="tile_size" value="8" />            <!-- RCPCC 瓦片大小 -->
+    <param name="q_level" value="3" />    <!-- RCPCC 量化等级 -->
+    <param name="use_compress" value="true" />       <!-- 是否启用二进制压缩 -->
+    <!-- 话题映射：订阅 DCL-SLAM 发布的“待压缩点云”话题 -->
+    <remap from="~input_points" to="/a/distributedMapping/point_cloud_to_compress" />
+    <!-- 话题映射：发布压缩后的点云话题（供 DCL-SLAM 订阅解压） -->
+    <remap from="~output_compressed" to="/a/distributedMapping/compressed_point_cloud" />
+  </node>
+
+  <node pkg="pcc_project" type="pcc_compressor_node" name="pcc_compressor_b" output="screen" respawn="$(arg set_respawn_value)">
+    <param name="robot_prefix" value="b" />
+    <param name="tile_size" value="8" />
+    <param name="q_level" value="3" />
+    <param name="use_compress" value="true" />
+    <remap from="~input_points" to="/b/distributedMapping/point_cloud_to_compress" />
+    <remap from="~output_compressed" to="/b/distributedMapping/compressed_point_cloud" />
+  </node>
+
+  <node pkg="pcc_project" type="pcc_compressor_node" name="pcc_compressor_c" output="screen" respawn="$(arg set_respawn_value)">
+    <param name="robot_prefix" value="c" />
+    <param name="tile_size" value="8" />
+    <param name="q_level" value="3" />
+    <param name="use_compress" value="true" />
+    <remap from="~input_points" to="/c/distributedMapping/point_cloud_to_compress" />
+    <remap from="~output_compressed" to="/c/distributedMapping/compressed_point_cloud" />
+  </node>
+
+	<!-- <arg name="SYSU_bag" value="/media/murphy/PortableSSD/dataset/S3E/1_Campus/Campus.bag"/> -->
+	<!-- <arg name="SYSU_bag" value="/media/murphy/PortableSSD/dataset/S3E/2_Square/Square.bag"/> -->
+	<!-- <arg name="SYSU_bag" value="/media/murphy/PortableSSD/dataset/S3E/3_College/College.bag"/> -->
+	<!-- <arg name="SYSU_bag" value="/media/murphy/PortableSSD/dataset/S3E/4_Dormitory/Dormitory.bag"/> -->
+	 <arg name="SYSU_bag" value="/media/walker/新加卷/dataset/5_S3E/5_Library/Library.bag"/> 
+
+	<remap from="/Alpha/velodyne_points" to="/a/velodyne_points"/>
+	<remap from="/Alpha/imu/data" to="/a/imu/data"/>
+	<remap from="/Bob/velodyne_points" to="/b/velodyne_points"/>
+	<remap from="/Bob/imu/data" to="/b/imu/data"/>
+	<!-- <remap from="/Carol/velodyne_points" to="/c/velodyne_points"/>
+	<remap from="/Carol/imu/data" to="/c/imu/data"/> -->
+
+  	<node name="player1" pkg="rosbag" type="play" output="screen" args="-r 1 -q -d 2 $(arg SYSU_bag)"/>
+	<!-- <node name="player2" pkg="rosbag" type="play" output="screen" args="-r 1 -q -d 2 $(arg SYSU_bag)"/> -->
+	<!-- <node name="player3" pkg="rosbag" type="play" output="screen" args="-r 1 -q -d 2 $(arg SYSU_bag)"/> -->
+
+</launch>

@@ -1,0 +1,83 @@
+<launch>
+    <arg name="set_lio_type" default="1"/> <!-- 1: LIO-SAM; 2: FAST-LIO2 -->
+    <param name="/number_of_robots" value="2"/>
+    <arg name="set_respawn_value" default="false"/>
+
+    <!-- Rviz可视化 -->
+    <node pkg="rviz" type="rviz" name="dcl_rviz" args="-d $(find dcl_slam)/config/dcl_rviz.rviz" />
+    <node pkg="dcl_slam" type="dcl_slam_loopVisualizationNode" name="dcl_slam_loopVisualizationNode" output="screen" />
+
+    <!-- 启动3个机器人的DCL-SLAM节点 -->
+
+    <include file="$(find dcl_slam)/launch/single_ugv.launch">
+        <arg name="robotPrefix" value="a"/>
+        <arg name="respawnValue" value="$(arg set_respawn_value)"/>
+        <arg name="lioType" value="$(arg set_lio_type)"/>
+    </include>
+    
+    <include file="$(find dcl_slam)/launch/single_ugv.launch">
+        <arg name="robotPrefix" value="b"/>
+        <arg name="respawnValue" value="$(arg set_respawn_value)"/>
+        <arg name="lioType" value="$(arg set_lio_type)"/>
+    </include>
+
+     <!--
+    <include file="$(find dcl_slam)/launch/single_ugv.launch">
+        <arg name="robotPrefix" value="c"/>
+        <arg name="respawnValue" value="$(arg set_respawn_value)"/>
+        <arg name="lioType" value="$(arg set_lio_type)"/>
+    </include>
+ -->   
+    
+    <node pkg="pcc_project" type="pcc_compressor_node" name="pcc_compressor_a" output="screen" respawn="$(arg set_respawn_value)">
+        <param name="robot_prefix" value="a" /> 
+        <param name="tile_size" value="4" />
+        <param name="q_level" value="3" />
+        <param name="use_compress" value="true" />
+        
+        <remap from="~input_points" to="/a/distributedMapping/point_cloud_to_compress" />
+        
+        <remap from="~output_compressed" to="/a/distributedMapping/compressed_point_cloud" />
+    </node>
+
+    
+    <node pkg="pcc_project" type="pcc_compressor_node" name="pcc_compressor_b" output="screen" respawn="$(arg set_respawn_value)">
+        <param name="robot_prefix" value="b" />
+        <param name="tile_size" value="4" />
+        <param name="q_level" value="3" />
+        <param name="use_compress" value="true" />
+        <remap from="~input_points" to="/b/distributedMapping/point_cloud_to_compress" />
+        <remap from="~output_compressed" to="/b/distributedMapping/compressed_point_cloud" />
+    </node>
+
+    <!--
+    <node pkg="pcc_project" type="pcc_compressor_node" name="pcc_compressor_c" output="screen" respawn="$(arg set_respawn_value)">
+        <param name="robot_prefix" value="c" /> 
+        <param name="tile_size" value="4" />
+        <param name="q_level" value="3" />
+        <param name="use_compress" value="true" />
+        <remap from="~input_points" to="/c/distributedMapping/point_cloud_to_compress" />
+        <remap from="~output_compressed" to="/c/distributedMapping/compressed_point_cloud" />
+    </node>
+-->
+
+    <!-- 数据集配置 -->
+    <arg name="SYSU_bag" value="/media/walker/新加卷/dataset/5_S3E/5_Library/Library.bag"/>
+
+    <remap from="/Alpha/velodyne_points" to="/a/velodyne_points"/>
+	<remap from="/Alpha/imu/data" to="/a/imu/data"/>
+     
+	<remap from="/Bob/velodyne_points" to="/b/velodyne_points"/>
+	<remap from="/Bob/imu/data" to="/b/imu/data"/>
+    
+	<!--
+    <remap from="/Carol/velodyne_points" to="/c/velodyne_points"/>
+	<remap from="/Carol/imu/data" to="/c/imu/data"/> 
+    -->
+
+  	<node name="player1" pkg="rosbag" type="play" output="screen" args="-r 1 -q -d 2 $(arg SYSU_bag)"/>
+	<!-- <node name="player2" pkg="rosbag" type="play" output="screen" args="-r 1 -q -d 2 $(arg SYSU_bag)"/> -->
+	<!-- <node name="player3" pkg="rosbag" type="play" output="screen" args="-r 1 -q -d 2 $(arg SYSU_bag)"/> -->
+
+</launch>
+    

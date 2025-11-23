@@ -1,0 +1,89 @@
+<launch>
+	<arg name="set_lio_type" default="1"/> <!-- 1 for LIO-SAM
+												2 for FAST-LIO2 -->
+	<param name="/number_of_robots" value="9"/>
+	<arg name="set_respawn_value" default="false"/>  <!-- boolean: true, false -->
+
+	<!--- rviz -->
+	<node pkg="rviz" type="rviz" name="dcl_rviz" args="-d $(find dcl_slam)/config/dcl_rviz.rviz" />
+	<node pkg="dcl_slam" type="dcl_slam_loopVisualizationNode" name="dcl_slam_loopVisualizationNode" output="screen" />
+
+	<!-- Robot list -->
+  	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="a"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="b"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="c"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="d"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="e"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="f"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="g"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="h"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv.launch">
+    	<arg name="robotPrefix" value="i"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<!-- SYSU S3E bag file path -->
+	<arg name="bag_file3" value="$(env HOME)/2022_07_22_19_48_01_rect_former.bag"/>
+	<arg name="bag_file4" value="$(env HOME)/2022_07_22_19_54_37_rect_former.bag"/>
+	<arg name="bag_file5" value="$(env HOME)/2022_07_22_20_01_00_rect_former.bag"/>
+  	<node name="player3" pkg="rosbag" type="play" output="screen" args="-r 1 -p d -q -d 2 $(arg bag_file3)"/>
+	<node name="player4" pkg="rosbag" type="play" output="screen" args="-r 1 -p e -q -d 2 $(arg bag_file4)"/>
+	<node name="player5" pkg="rosbag" type="play" output="screen" args="-r 1 -p f -q -d 2 $(arg bag_file5)"/>
+	
+	<arg name="bag_file9" value="$(env HOME)/2022_07_22_19_48_01_rect_latter.bag"/>
+	<arg name="bag_file10" value="$(env HOME)/2022_07_22_19_54_37_rect_latter.bag"/>
+	<arg name="bag_file11" value="$(env HOME)/2022_07_22_20_01_00_rect_latter.bag"/>
+  	<node name="player9" pkg="rosbag" type="play" output="screen" args="-r 1 -p g -q -d 2 $(arg bag_file9)"/>
+	<node name="player10" pkg="rosbag" type="play" output="screen" args="-r 1 -p h -q -d 2 $(arg bag_file10)"/>
+	<node name="player11" pkg="rosbag" type="play" output="screen" args="-r 1 -p i -q -d 2 $(arg bag_file11)"/>
+
+	<arg name="SYSU_bag" value="$(env HOME)/SYSU_LIBRARY_former.bag"/>
+	<remap from="/Alpha/velodyne_points" to="/a/velodyne_points"/>
+	<remap from="/Bob/velodyne_points" to="/b/velodyne_points"/>
+	<remap from="/Carol/velodyne_points" to="/c/velodyne_points"/>
+	<remap from="/Alpha/imu/data" to="/a/imu/data"/>
+	<remap from="/Bob/imu/data" to="/b/imu/data"/>
+	<remap from="/Carol/imu/data" to="/c/imu/data"/>
+	<node name="player2" pkg="rosbag" type="play" output="screen" args="-r 1 -q -d 8 $(arg SYSU_bag)"/>
+</launch>

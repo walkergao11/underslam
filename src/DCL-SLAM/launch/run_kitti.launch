@@ -1,0 +1,52 @@
+<launch>
+	<arg name="set_lio_type" default="1"/> <!-- 1 for LIO-SAM
+												2 for FAST-LIO2-ROT -->
+	<param name="/number_of_robots" value="3"/>
+	<arg name="set_respawn_value" default="false"/>  <!-- boolean: true, false -->
+
+	<!--- rviz -->
+	<node pkg="rviz" type="rviz" name="dcl_rviz" args="-d $(find dcl_slam)/config/dcl_rviz.rviz" />
+	<node pkg="dcl_slam" type="dcl_slam_loopVisualizationNode" name="dcl_slam_loopVisualizationNode" output="screen" />
+	
+	<!-- Robot list -->
+  	<include file="$(find dcl_slam)/launch/single_ugv_kitti.launch">
+    	<arg name="robotPrefix" value="a"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv_kitti.launch">
+    	<arg name="robotPrefix" value="b"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<include file="$(find dcl_slam)/launch/single_ugv_kitti.launch">
+    	<arg name="robotPrefix" value="c"/>
+		<arg name="respawnValue" value="$(arg set_respawn_value)"/>
+		<arg name="lioType" value="$(arg set_lio_type)"/>
+  	</include>
+
+	<!-- rosbag player node ->> you need to change bag file here!!! -->
+	<!-- sequence 09 bag file path -->
+	<!-- <arg name="bag_file3" value="$(env HOME)/rosbag-data/KITTI/kitti_sequence_09_01.bag"/>
+	<arg name="bag_file4" value="$(env HOME)/rosbag-data/KITTI/kitti_sequence_09_02.bag"/>
+	<arg name="bag_file5" value="$(env HOME)/rosbag-data/KITTI/kitti_sequence_09_03.bag"/>
+  	<node name="player3" pkg="rosbag" type="play" output="screen" args="-p a -q -d 4 $(arg bag_file3)"/>
+	<node name="player4" pkg="rosbag" type="play" output="screen" args="-p b -q -d 4 $(arg bag_file4)"/>
+	<node name="player5" pkg="rosbag" type="play" output="screen" args="-p c -q -d 4 $(arg bag_file5)"/> -->
+
+	<!-- sequence 05 bag file path -->
+	<arg name="bag_file6" value="$(env HOME)/rosbag-data/KITTI/kitti_sequence_05_01.bag"/>
+	<arg name="bag_file7" value="$(env HOME)/rosbag-data/KITTI/kitti_sequence_05_02.bag"/>
+	<arg name="bag_file8" value="$(env HOME)/rosbag-data/KITTI/kitti_sequence_05_03.bag"/>
+  	<node name="player6" pkg="rosbag" type="play" output="screen" args="-p a -q -d 4 $(arg bag_file6)"/>
+	<node name="player7" pkg="rosbag" type="play" output="screen" args="-p b -q -d 4 $(arg bag_file7)"/>
+	<node name="player8" pkg="rosbag" type="play" output="screen" args="-p c -q -d 4 $(arg bag_file8)"/>
+
+	<!-- sequence 08 bag file path -->
+	<!-- <arg name="bag_file9" value="$(env HOME)/rosbag-data/KITTI/kitti_sequence_08_01.bag"/>
+	<arg name="bag_file10" value="$(env HOME)/rosbag-data/KITTI/kitti_sequence_08_02.bag"/>
+  	<node name="player9" pkg="rosbag" type="play" output="screen" args="-q -p a -d 4 $(arg bag_file9)"/>
+	<node name="player10" pkg="rosbag" type="play" output="screen" args="-q -p b -d 4 $(arg bag_file10)"/> -->
+</launch>

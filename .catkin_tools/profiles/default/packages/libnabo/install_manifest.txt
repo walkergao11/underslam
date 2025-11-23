@@ -1,0 +1,6 @@
+/home/walker/cslam_ws/devel/lib/libnabo.a
+/home/walker/cslam_ws/devel/include/nabo/nabo.h
+/home/walker/cslam_ws/devel/share/doc/libnabo/README.md
+/home/walker/cslam_ws/devel/share/libnabo/package.xml
+/home/walker/cslam_ws/devel/share/libnabo/cmake/libnaboConfig.cmake
+/home/walker/cslam_ws/devel/share/libnabo/cmake/libnaboConfigVersion.cmake
